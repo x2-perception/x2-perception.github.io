@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>x2-perception</title>
+<meta name="description" content="Perceptive locomotion for the AgiBot X2 humanoid: ACP ported from the Unitree G1 with LiDAR to the X2 with a custom chest-mounted depth camera.">
+<meta property="og:title" content="x2-perception">
+<meta property="og:description" content="AgiBot X2 walking rough terrain on a chest depth camera, in simulation.">
+<meta property="og:image" content="https://raw.githubusercontent.com/meetsitaram/x2-perception/main/docs/media/acp_depth_park.gif">
+<style>
+  :root {
+    --bg: #fbfbf9; --fg: #1c1d1f; --muted: #5d6168; --line: #e3e3de; --card: #ffffff; --accent: #2f6fdb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #121315; --fg: #ececea; --muted: #a2a6ad; --line: #2a2c30; --card: #1a1b1e; --accent: #7aa7ff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 900px; margin: 0 auto; padding: 48px 16px 64px; }
+  h1 { font-size: 2.4rem; line-height: 1.15; margin: 0 0 8px; letter-spacing: -0.01em; }
+  h2 { font-size: 1.3rem; margin: 48px 0 12px; }
+  .lede { font-size: 1.15rem; color: var(--muted); margin: 0 0 20px; }
+  .links { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 28px; }
+  .links a { border: 1px solid var(--line); background: var(--card); color: var(--fg); text-decoration: none; padding: 7px 14px;
+             border-radius: 999px; font-size: 0.95rem; }
+  .links a:hover { border-color: var(--accent); }
+  video, img { width: 100%; display: block; border-radius: 10px; border: 1px solid var(--line); }
+  .cap { color: var(--muted); font-size: 0.92rem; margin: 8px 0 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.95rem; margin: 8px 0; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  td.num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 1.9rem; } }
+  .note { color: var(--muted); font-size: 0.92rem; }
+  a { color: var(--accent); }
+  footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>x2-perception</h1>
+  <p class="lede">Perceptive locomotion for the AgiBot X2 humanoid. ACP, originally developed on the Unitree G1 with a LiDAR,
+  re-implemented for the X2 and driven by a custom chest-mounted depth camera.</p>
+  <div class="links">
+    <a href="https://github.com/meetsitaram/x2-perception">Code</a>
+    <a href="https://huggingface.co/tinkerbuggy/x2-acp-contact-planner-tracker">Model (ACP)</a>
+    <a href="https://github.com/meetsitaram/x2-perception/blob/main/docs/EVAL.md">Evaluation</a>
+  </div>
+
+  <a href="https://github.com/meetsitaram/x2-perception/blob/main/docs/media/acp_depth_park.mp4"><img src="https://raw.githubusercontent.com/meetsitaram/x2-perception/main/docs/media/acp_depth_park.gif" alt="ACP on the depth camera alone: X2s on the terrain park and the apparatus"></a>
+  <p class="cap">ACP on the depth camera alone: 62 X2s on a terrain park (4x4s, blocks, ramps, wedges, stairs, homes,
+  hallways). Click for the full film, which ends with the whole route of our replica of the competition apparatus. Tiles: the height map the depth student gave
+  ACP; rings: planned footholds; inset: the chest depth image; red: a stumble. Simulation.</p>
+
+  <h2>Approach</h2>
+  <p>The X2's built-in depth camera cannot see the ground close to its feet, where every foothold is placed. We add a depth
+  camera on a 3D-printed chest mount and train a depth student that turns its image, with the robot's own proprioception,
+  into the height maps ACP needs. ACP is re-implemented for the X2 and trained from scratch in simulation; everything is
+  scored by a held-out MuJoCo evaluation on a replica of the IEEE Humanoids 2026 loco-manipulation apparatus that never
+  appears in training.</p>
+
+  <h2>Results</h2>
+  <table>
+    <tr><th>Approach</th><th>Terrain input</th><th>Our apparatus replica</th></tr>
+    <tr><td><b>ACP + depth student</b></td><td>chest depth camera only</td><td class="num"><b>46/50 (92%)</b></td></tr>
+    <tr><td>ACP</td><td>simulator height maps</td><td class="num">198/200 (99%)</td></tr>
+    <tr><td>Hiking in the Wild (X2 port)</td><td>chest depth camera</td><td class="num">not yet evaluated</td></tr>
+    <tr><td>SSR (X2 port)</td><td>chest depth camera</td><td class="num">not yet evaluated</td></tr>
+  </table>
+  <p class="note">Success = the full route (door, two 4x4s, ramps, wall, stairs, five buttons) without a fall, with randomised
+  physics. All results are in simulation; real-robot deployment is in progress.</p>
+
+  <h2>More clips</h2>
+  <div class="grid">
+    <figure style="margin:0"><img src="https://raw.githubusercontent.com/meetsitaram/x2-perception/main/docs/media/acp_full_route.gif" alt="ACP on the full apparatus route" loading="lazy"><p class="cap">ACP: full apparatus route</p></figure>
+    <figure style="margin:0"><img src="https://raw.githubusercontent.com/meetsitaram/x2-perception/main/docs/media/acp_homes_blocks.gif" alt="ACP in a furnished room with blocks" loading="lazy"><p class="cap">ACP: homes, big and small blocks</p></figure>
+    <figure style="margin:0"><img src="https://raw.githubusercontent.com/meetsitaram/x2-perception/main/docs/media/hiking_map_stairs_L.gif" alt="Hiking in the Wild on an L-shaped staircase" loading="lazy"><p class="cap">Hiking in the Wild: L-shaped stairs</p></figure>
+    <figure style="margin:0"><img src="https://raw.githubusercontent.com/meetsitaram/x2-perception/main/docs/media/ssr_map_stairs_C.gif" alt="SSR on a U-shaped staircase" loading="lazy"><p class="cap">SSR: U-shaped stairs</p></figure>
+  </div>
+
+  <h2>Competition</h2>
+  <p>Team x2-perception will take part in the mobility tasks of the IEEE Humanoids 2026 Loco-Manipulation Challenge
+  (stepover obstacles, crossing ramps, flat-ground walking, stairs) with the AgiBot X2 provided at the conference.</p>
+
+  <footer>
+    Sitarama Chekuri &middot; Team x2-perception, Independent, USA<br>
+    Methods: Adaptive Contact Planning (arXiv 2610.31608), Hiking in the Wild (arXiv 2601.07718), SSR (arXiv 2605.30770).
+    Code and details: <a href="https://github.com/meetsitaram/x2-perception">github.com/meetsitaram/x2-perception</a>.
+  </footer>
+</main>
+</body>
+</html>
