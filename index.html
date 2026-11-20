@@ -44,6 +44,7 @@
   <p class="lede">Perceptive locomotion for the AgiBot X2 humanoid. ACP, originally developed on the Unitree G1 with a LiDAR,
   re-implemented for the X2 and driven by a custom chest-mounted depth camera.</p>
   <div class="links">
+    <a href="tdp.pdf">Paper (TDP)</a>
     <a href="https://github.com/meetsitaram/x2-perception">Code</a>
     <a href="https://huggingface.co/tinkerbuggy/x2-acp-contact-planner-tracker">Model (ACP)</a>
     <a href="https://github.com/meetsitaram/x2-perception/blob/main/docs/EVAL.md">Evaluation</a>
@@ -70,7 +71,13 @@
     <tr><td>SSR (X2 port)</td><td>chest depth camera</td><td class="num">not yet evaluated</td></tr>
   </table>
   <p class="note">Success = the full route (door, two 4x4s, ramps, wall, stairs, five buttons) without a fall, with randomised
-  physics. All results are in simulation; real-robot deployment is in progress.</p>
+  physics. Simulation results.</p>
+
+  <h2>Real robot</h2>
+  <video controls muted playsinline preload="metadata" src="https://raw.githubusercontent.com/meetsitaram/x2-perception/main/docs/media/x2_outdoor_walk.mp4" style="width:100%;max-width:360px;display:block;margin:0 auto"></video>
+  <p class="cap">The same policy on the real X2, zero-shot (no training on the robot), running on its onboard computer with the
+  chest depth camera: it stands steadily, recovers from pushes, and walks an outdoor course of patio, gravel, a step down and a
+  doorway under gamepad control.</p>
 
   <h2>More clips</h2>
   <div class="grid">
